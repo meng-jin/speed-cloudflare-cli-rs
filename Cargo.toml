@@ -2,5 +2,23 @@
 name = "speed-cloudflare-cli-rs"
 version = "0.1.0"
 edition = "2024"
+description = "A fast Rust implementation of Cloudflare speed test CLI"
+license = "MIT"
+repository = "https://github.com/Akaere-NetWorks/speed-cloudflare-cli-rs"
+
+[[bin]]
+name = "speed-cloudflare-cli"
+path = "src/main.rs"
 
 [dependencies]
+tokio = { version = "1.0", features = ["full"] }
+reqwest = { version = "0.11", features = ["json", "stream"] }
+clap = { version = "4.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+indicatif = "0.17"
+colored = "2.0"
+anyhow = "1.0"
+futures = "0.3"
+rand = "0.8"
+bytes = "1.0"
