@@ -74,24 +74,20 @@ if [ ! -f "$FILENAME" ]; then
 
     echo "正在添加执行权限..."
     chmod +x "$FILENAME"
-
+else
     echo "已找到可执行文件，跳过设置步骤。"
 fi
 
-# 运行程序并捕获输出
 echo "正在运行 Cloudflare Speed Test..."
 OUTPUT=$(./"$FILENAME")
 
-# 打印原始英文结果
 echo "$OUTPUT"
 
-# 解析输出并翻译
 printf "
 ════════════════════════════════════════════════════════════
                 Cloudflare 测速测试结果
 ════════════════════════════════════════════════════════════\n"
 
-# 使用精确匹配来区分 Latency 行
 SERVER_LOCATION=$(echo "$OUTPUT" | grep "^Server location:" | awk '{print $NF}')
 YOUR_IP=$(echo "$OUTPUT" | grep "^Your IP:" | awk '{print $NF}')
 LATENCY=$(echo "$OUTPUT" | grep "^Latency:" | awk '{print $(NF-1), $(NF)}')
@@ -126,11 +122,11 @@ esac
 printf "%-21s %s\n" "服务器位置:" "$SERVER_LOCATION"
 printf "%-18s %s\n" "你的 IP:" "$YOUR_IP"
 printf "%-18s %s\n" "延迟:" "$LATENCY"
-printf "%-18s %s\n" "100kB 速度:" "$SPEED_100KB"
-printf "%-18s %s\n" "1MB 速度:" "$SPEED_1MB"
-printf "%-18s %s\n" "10MB 速度:" "$SPEED_10MB"
-printf "%-18s %s\n" "25MB 速度:" "$SPEED_25MB"
-printf "%-18s %s\n" "100MB 速度:" "$SPEED_100MB"
+printf "%-20s %s\n" "100KB 文件速度:" "$SPEED_100KB"
+printf "%-20s %s\n" "1MB 文件速度:" "$SPEED_1MB"
+printf "%-20s %s\n" "10MB 文件速度:" "$SPEED_10MB"
+printf "%-20s %s\n" "25MB 文件速度:" "$SPEED_25MB"
+printf "%-20s %s\n" "100MB 文件速度:" "$SPEED_100MB"
 printf "%-20s %s\n" "下载速度:" "$DOWNLOAD_SPEED"
 printf "%-20s %s\n" "上传速度:" "$UPLOAD_SPEED"
 printf "════════════════════════════════════════════════════════════\n"
