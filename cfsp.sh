@@ -7,9 +7,15 @@ if [ ! -L "$LINK_PATH" ]; then
     echo "首次运行脚本，正在为您创建 'cfsp' 命令快捷方式..."
     sudo ln -s "$SCRIPT_PATH" "$LINK_PATH"
     if [ $? -eq 0 ]; then
-        echo "'cfsp' 命令已成功创建，您现在可以直接在终端输入cfsp使用它"
+        echo "快捷方式创建成功，正在添加执行权限..."
+        sudo chmod +x "$LINK_PATH"
+        if [ $? -eq 0 ]; then
+            echo "'cfsp' 命令已成功创建。您现在可以直接在终端输入cfsp进行测速"
+        else
+            echo "警告：添加执行权限失败。请手动运行 'sudo chmod +x $LINK_PATH'"
+        fi
     else
-        echo "创建快捷方式失败，请检查权限或手动创建"
+        echo "创建快捷指令失败，请检查权限或手动创建"
     fi
 fi
 
@@ -69,29 +75,33 @@ if [ ! -f "$FILENAME" ]; then
     echo "正在添加执行权限..."
     chmod +x "$FILENAME"
 
-    echo "已找到可执行文件，跳过设置步骤"
+    echo "已找到可执行文件，跳过设置步骤。"
 fi
 
+# 运行程序并捕获输出
 echo "正在运行 Cloudflare Speed Test..."
 OUTPUT=$(./"$FILENAME")
 
+# 打印原始英文结果
 echo "$OUTPUT"
 
+# 解析输出并翻译
 printf "
 ════════════════════════════════════════════════════════════
-                CLOUDFLARE 测速结果
+                Cloudflare 测速测试结果
 ════════════════════════════════════════════════════════════\n"
 
+# 使用精确匹配来区分 Latency 行
 SERVER_LOCATION=$(echo "$OUTPUT" | grep "^Server location:" | awk '{print $NF}')
 YOUR_IP=$(echo "$OUTPUT" | grep "^Your IP:" | awk '{print $NF}')
-LATENCY=$(echo "$OUTPUT" | grep "^Latency:" | awk '{print $(NF-1), $NF}')
-SPEED_100KB=$(echo "$OUTPUT" | grep "^100kB speed:" | awk '{print $(NF-1), $NF}')
-SPEED_1MB=$(echo "$OUTPUT" | grep "^1MB speed:" | awk '{print $(NF-1), $NF}')
-SPEED_10MB=$(echo "$OUTPUT" | grep "^10MB speed:" | awk '{print $(NF-1), $NF}')
-SPEED_25MB=$(echo "$OUTPUT" | grep "^25MB speed:" | awk '{print $(NF-1), $NF}')
-SPEED_100MB=$(echo "$OUTPUT" | grep "^100MB speed:" | awk '{print $(NF-1), $NF}')
-DOWNLOAD_SPEED=$(echo "$OUTPUT" | grep "^Download speed:" | awk '{print $(NF-1), $NF}')
-UPLOAD_SPEED=$(echo "$OUTPUT" | grep "^Upload speed:" | awk '{print $(NF-1), $NF}')
+LATENCY=$(echo "$OUTPUT" | grep "^Latency:" | awk '{print $(NF-1), $(NF)}')
+SPEED_100KB=$(echo "$OUTPUT" | grep "^100kB speed:" | awk '{print $(NF-1), $(NF)}')
+SPEED_1MB=$(echo "$OUTPUT" | grep "^1MB speed:" | awk '{print $(NF-1), $(NF)}')
+SPEED_10MB=$(echo "$OUTPUT" | grep "^10MB speed:" | awk '{print $(NF-1), $(NF)}')
+SPEED_25MB=$(echo "$OUTPUT" | grep "^25MB speed:" | awk '{print $(NF-1), $(NF)}')
+SPEED_100MB=$(echo "$OUTPUT" | grep "^100MB speed:" | awk '{print $(NF-1), $(NF)}')
+DOWNLOAD_SPEED=$(echo "$OUTPUT" | grep "^Download speed:" | awk '{print $(NF-1), $(NF)}')
+UPLOAD_SPEED=$(echo "$OUTPUT" | grep "^Upload speed:" | awk '{print $(NF-1), $(NF)}')
 
 DOWNLOAD_QUALITY=$(echo "$OUTPUT" | grep "  Download:" | awk '{print $2}')
 LATENCY_QUALITY=$(echo "$OUTPUT" | grep "  Latency:" | awk '{print $2}')
